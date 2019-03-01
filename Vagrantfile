@@ -16,7 +16,7 @@ apt-get update
 apt-get install -y -q vim slurm-llnl
 echo "10.10.10.3    controller" >> /etc/hosts
 echo "10.10.10.4    server" >> /etc/hosts
-wget https://raw.github.com/guillermo-carrasco/mussolblog/master/setting_up_a_testing_SLURM_cluster/slurm.conf
+wget https://raw.githubusercontent.com/stevekm/slurm-cluster-vagrant/master/slurm.conf
 mv slurm.conf /etc/slurm-llnl/
 SCRIPT
 
