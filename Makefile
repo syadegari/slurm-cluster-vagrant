@@ -10,6 +10,6 @@ setup:
 start:
 	vagrant ssh controller -- -t 'sudo /etc/init.d/munge start' && \
 	vagrant ssh server -- -t 'sudo /etc/init.d/munge start' && \
-	vagrant ssh controller -- -t 'sudo slurmctld -D &' && \
+	vagrant ssh controller -- -t 'sudo slurmctld -D -L /vagrant/controller.log &' && \
 	vagrant ssh controller -- -t 'sudo slurmctld start' && \
 	vagrant ssh server -- -t 'sudo /etc/init.d/slurmd start'
