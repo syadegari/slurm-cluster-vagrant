@@ -1,3 +1,5 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
 #Define the list of machines
 slurm_cluster = {
     :controller => {
@@ -24,13 +26,12 @@ Vagrant.configure("2") do |global_config|
     slurm_cluster.each_pair do |name, options|
         global_config.vm.define name do |config|
             #VM configurations
-            config.vm.box = "precise64"
-            config.vm.hostname = "#{name}"
+            config.vm.box = "ubuntu/xenial64"
             config.vm.network :private_network, ip: options[:ipaddress]
 
             #VM specifications
             config.vm.provider :virtualbox do |v|
-                v.customize ["modifyvm", :id, "--memory", "512"]
+                v.customize ["modifyvm", :id, "--memory", "1024"]
             end
 
             #VM provisioning
