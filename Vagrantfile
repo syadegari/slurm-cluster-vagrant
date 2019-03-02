@@ -18,8 +18,7 @@ apt-get update
 apt-get install -y -q vim slurm-llnl
 echo "10.10.10.3    controller" >> /etc/hosts
 echo "10.10.10.4    server" >> /etc/hosts
-wget https://raw.githubusercontent.com/stevekm/slurm-cluster-vagrant/master/slurm.conf
-mv slurm.conf /etc/slurm-llnl/
+ln -s /vagrant/slurm.conf /etc/slurm-llnl/slurm.conf
 SCRIPT
 
 Vagrant.configure("2") do |global_config|
@@ -27,11 +26,14 @@ Vagrant.configure("2") do |global_config|
         global_config.vm.define name do |config|
             #VM configurations
             config.vm.box = "ubuntu/xenial64"
+            config.vm.hostname = "#{name}"
             config.vm.network :private_network, ip: options[:ipaddress]
 
             #VM specifications
             config.vm.provider :virtualbox do |v|
-                v.customize ["modifyvm", :id, "--memory", "1024"]
+                # v.customize ["modifyvm", :id, "--memory", "1024"]
+                v.cpus = 1
+                v.memory = 1024
             end
 
             #VM provisioning
