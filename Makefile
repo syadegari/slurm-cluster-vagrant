@@ -8,6 +8,7 @@ setup:
 	rm -f munge.key
 
 start:
+	find slurm -type d -exec chmod a+rwx {} \; && \
 	vagrant ssh controller -- -t 'sudo /etc/init.d/munge start' && \
 	vagrant ssh server -- -t 'sudo /etc/init.d/munge start' && \
 	vagrant ssh controller -- -t 'sudo slurmctld -D &' && \
