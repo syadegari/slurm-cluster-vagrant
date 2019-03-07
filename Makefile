@@ -13,7 +13,6 @@ start:
 	vagrant ssh server -- -t 'sudo /etc/init.d/munge start' && \
 	vagrant ssh controller -- -t 'sudo slurmctld; sleep 5' && \
 	vagrant ssh server -- -t 'sudo slurmd'
-# vagrant ssh server -- -t 'sudo /etc/init.d/slurmd start'
 
 # https://slurm.schedmd.com/troubleshoot.html
 test:
@@ -34,8 +33,6 @@ test:
 	@echo ">>> Running another test job"
 	@vagrant ssh controller -- -t 'sbatch /vagrant/job.sh'
 
-
-
 stop:
 	vagrant halt --force controller
 	vagrant halt --force server
@@ -43,7 +40,6 @@ stop:
 remove:
 	vagrant destroy controller
 	vagrant destroy server
-# -L /vagrant/controller.log
 
 get-config-html:
 	vagrant ssh controller -- -t 'cp /usr/share/doc/slurmctld/*.html /vagrant/'
