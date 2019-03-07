@@ -11,21 +11,20 @@ start:
 	find slurm -type d -exec chmod a+rwx {} \; && \
 	vagrant ssh controller -- -t 'sudo /etc/init.d/munge start' && \
 	vagrant ssh server -- -t 'sudo /etc/init.d/munge start' && \
-	vagrant ssh controller -- -t 'sudo slurmctld -D &' && \
-	vagrant ssh controller -- -t 'sudo slurmctld start' && \
+	vagrant ssh controller -- -t 'sudo slurmctld; sleep 5' && \
 	vagrant ssh server -- -t 'sudo /etc/init.d/slurmd start'
 
 # https://slurm.schedmd.com/troubleshoot.html
 test:
 	@echo ">>> Checking if controller can contact node (network)"
 	@vagrant ssh controller -- -t 'ping 10.10.10.4 -c1'
-	@echo ">>> Checking if controller can contact node (SLURM)"
+	@echo ">>> Checking if SLURM controller is running"
 	@vagrant ssh controller -- -t 'scontrol ping'
 	@echo ">>> Checking if slurmctld is running on controller"
 	@vagrant ssh controller -- -t 'ps -el | grep slurmctld'
 	@echo ">>> Checking if node can contact controller (network)"
 	@vagrant ssh server -- -t 'ping 10.10.10.3 -c1'
-	@echo ">>> Checking if node can contact controller (SLURM)"
+	@echo ">>> Checking if node can contact SLURM controller"
 	@vagrant ssh server -- -t 'scontrol ping'
 	@echo ">>> Checking if slurmd is running on node"
 	@vagrant ssh server -- -t 'ps -el | grep slurmd'
