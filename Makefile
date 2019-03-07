@@ -12,7 +12,8 @@ start:
 	vagrant ssh controller -- -t 'sudo /etc/init.d/munge start' && \
 	vagrant ssh server -- -t 'sudo /etc/init.d/munge start' && \
 	vagrant ssh controller -- -t 'sudo slurmctld; sleep 5' && \
-	vagrant ssh server -- -t 'sudo /etc/init.d/slurmd start'
+	vagrant ssh server -- -t 'sudo slurmd'
+# vagrant ssh server -- -t 'sudo /etc/init.d/slurmd start'
 
 # https://slurm.schedmd.com/troubleshoot.html
 test:
