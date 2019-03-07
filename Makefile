@@ -29,6 +29,12 @@ test:
 	@vagrant ssh server -- -t 'scontrol ping'
 	@echo ">>> Checking if slurmd is running on node"
 	@vagrant ssh server -- -t 'ps -el | grep slurmd'
+	@echo ">>> Running a test job"
+	@vagrant ssh controller -- -t 'sbatch --wrap="hostname"'
+	@echo ">>> Running another test job"
+	@vagrant ssh controller -- -t 'sbatch /vagrant/job.sh'
+
+
 
 stop:
 	vagrant halt --force controller
