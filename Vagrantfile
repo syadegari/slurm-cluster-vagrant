@@ -6,8 +6,8 @@ slurm_cluster = {
         :hostname => "controller",
         :ipaddress => "10.10.10.3"
     },
-    :server => {
-        :hostname => "server",
+    :node1 => {
+        :hostname => "node1",
         :ipaddress => "10.10.10.4"
     }
 }
@@ -17,7 +17,7 @@ $script = <<SCRIPT
 apt-get update
 apt-get install -y -q vim slurm-llnl
 echo "10.10.10.3    controller" >> /etc/hosts
-echo "10.10.10.4    server" >> /etc/hosts
+echo "10.10.10.4    node1" >> /etc/hosts
 ln -s /vagrant/slurm.conf /etc/slurm-llnl/slurm.conf
 SCRIPT
 
