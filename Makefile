@@ -25,7 +25,8 @@ start:
 	vagrant ssh controller -- -t 'sudo /etc/init.d/munge start' && \
 	vagrant ssh server -- -t 'sudo /etc/init.d/munge start' && \
 	vagrant ssh controller -- -t 'sudo slurmctld; sleep 30' && \
-	vagrant ssh server -- -t 'sudo slurmd'
+	vagrant ssh server -- -t 'sudo slurmd; sleep 30' && \
+	vagrant ssh controller -- -t 'sudo scontrol update nodename=server state=resume'
 
 # might need this to fix node down state
 # sudo scontrol update nodename=server state=resume
@@ -33,26 +34,26 @@ start:
 # https://slurm.schedmd.com/troubleshoot.html
 # munge log: /var/log/munge/munged.log
 test:
-	@echo ">>> Checking munge keys on both machines"
+	@printf ">>> Checking munge keys on both machines\n"
 	@vagrant ssh controller -- -t 'sudo md5sum /etc/munge/munge.key; ls -l /etc/munge/munge.key'
 	@vagrant ssh server -- -t 'sudo md5sum /etc/munge/munge.key; ls -l /etc/munge/munge.key'
-	@echo ">>> Checking if controller can contact node (network)"
+	@printf "\n\n>>> Checking if controller can contact node (network)\n"
 	@vagrant ssh controller -- -t 'ping 10.10.10.4 -c1'
-	@echo ">>> Checking if SLURM controller is running"
+	@printf "\n\n>>> Checking if SLURM controller is running\n"
 	@vagrant ssh controller -- -t 'scontrol ping'
-	@echo ">>> Checking if slurmctld is running on controller"
+	@printf "\n\n>>> Checking if slurmctld is running on controller\n"
 	@vagrant ssh controller -- -t 'ps -el | grep slurmctld'
-	@echo ">>> Checking if node can contact controller (network)"
+	@printf "\n\n>>> Checking if node can contact controller (network)\n"
 	@vagrant ssh server -- -t 'ping 10.10.10.3 -c1'
-	@echo ">>> Checking if node can contact SLURM controller"
+	@printf "\n\n>>> Checking if node can contact SLURM controller\n"
 	@vagrant ssh server -- -t 'scontrol ping'
-	@echo ">>> Checking if slurmd is running on node"
+	@printf "\n\n>>> Checking if slurmd is running on node\n"
 	@vagrant ssh server -- -t 'ps -el | grep slurmd'
-	@echo ">>> Running a test job"
+	@printf "\n\n>>> Running a test job\n"
 	@vagrant ssh controller -- -t 'sbatch --wrap="hostname"'
-	@echo ">>> Running another test job"
+	@printf "\n\n>>> Running another test job\n"
 	@vagrant ssh controller -- -t 'sbatch /vagrant/job.sh'
-	@echo ">>> Checking node status"
+	@printf "\n\n>>> Checking node status\n"
 	@vagrant ssh controller -- -t 'scontrol show nodes=server'
 
 # pull the plug on the VMs
