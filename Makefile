@@ -22,14 +22,18 @@ setup:
 # start slurmd
 start:
 	find slurm -type d -exec chmod a+rwx {} \; && \
-	vagrant ssh controller -- -t 'sudo /etc/init.d/munge start' && \
-	vagrant ssh server -- -t 'sudo /etc/init.d/munge start' && \
+	vagrant ssh controller -- -t 'sudo /etc/init.d/munge start; sleep 5' && \
+	vagrant ssh server -- -t 'sudo /etc/init.d/munge start; sleep 5' && \
 	vagrant ssh controller -- -t 'sudo slurmctld; sleep 30' && \
 	vagrant ssh server -- -t 'sudo slurmd; sleep 30' && \
-	vagrant ssh controller -- -t 'sudo scontrol update nodename=server state=resume'
+	vagrant ssh controller -- -t 'sudo scontrol update nodename=server state=resume; sinfo; sleep 5'
 
-# might need this to fix node down state
-# sudo scontrol update nodename=server state=resume
+sinfo:
+	vagrant ssh controller -- -t 'sinfo'
+
+# might need this to fix node down state?
+# fix:
+# 	vagrant ssh controller -- -t 'sudo scontrol update nodename=server state=resume'
 
 # https://slurm.schedmd.com/troubleshoot.html
 # munge log: /var/log/munge/munged.log
@@ -43,6 +47,8 @@ test:
 	@vagrant ssh controller -- -t 'scontrol ping'
 	@printf "\n\n>>> Checking if slurmctld is running on controller\n"
 	@vagrant ssh controller -- -t 'ps -el | grep slurmctld'
+	@printf "\n\n>>> Checking cluster status\n"
+	@vagrant ssh controller -- -t 'sinfo'
 	@printf "\n\n>>> Checking if node can contact controller (network)\n"
 	@vagrant ssh server -- -t 'ping 10.10.10.3 -c1'
 	@printf "\n\n>>> Checking if node can contact SLURM controller\n"
