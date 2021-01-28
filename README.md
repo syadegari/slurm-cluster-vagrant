@@ -1,7 +1,7 @@
 SLURM Vagrant Cluster
 =====================
 
-A demo SLURM cluster running in Vagrant virtual machines.
+A demo SLURM cluster running in Vagrant virtual machines. Each node has 2 CPUS and 512 MB. There are 3 compute nodes and a front node. When installing libraries, it may be needed to temporarily increase the memory (for example to 2048 MB) to avoid crashing (it happened when I tried to install mpi4py). 
 
 # Usage
 
