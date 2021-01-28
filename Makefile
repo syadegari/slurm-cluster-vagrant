@@ -5,15 +5,25 @@ SHELL:=/bin/bash
 # !! need cp -p or else munge keys do not work
 setup:
 	vagrant up && \
-	vagrant ssh controller -- -t 'sudo cp -p /etc/munge/munge.key /vagrant/' && \
-	vagrant ssh server -- -t 'sudo cp -p /vagrant/munge.key /etc/munge/' && \
-	vagrant ssh server -- -t 'sudo chown munge /etc/munge/munge.key' && \
-	vagrant ssh controller -- -t 'ssh-keygen -b 2048 -t rsa -q -N "" -f /home/vagrant/.ssh/id_rsa' && \
-	vagrant ssh controller -- -t 'cp /home/vagrant/.ssh/id_rsa.pub /vagrant/id_rsa.controller.pub' && \
-	vagrant ssh server -- -t 'cat /vagrant/id_rsa.controller.pub >> .ssh/authorized_keys' && \
-	vagrant ssh server -- -t 'ssh-keygen -b 2048 -t rsa -q -N "" -f /home/vagrant/.ssh/id_rsa' && \
-	vagrant ssh server -- -t 'cp /home/vagrant/.ssh/id_rsa.pub /vagrant/id_rsa.server.pub' && \
-	vagrant ssh controller -- -t 'cat /vagrant/id_rsa.server.pub >> .ssh/authorized_keys' && \
+	vagrant ssh controller  -- -t 'sudo cp -p /etc/munge/munge.key /vagrant/' && \
+	vagrant ssh server1     -- -t 'sudo cp -p /vagrant/munge.key /etc/munge/' && \
+	vagrant ssh server1     -- -t 'sudo chown munge /etc/munge/munge.key' && \
+	vagrant ssh server2     -- -t 'sudo cp -p /vagrant/munge.key /etc/munge/' && \
+	vagrant ssh server2     -- -t 'sudo chown munge /etc/munge/munge.key' && \
+	vagrant ssh server3     -- -t 'sudo cp -p /vagrant/munge.key /etc/munge/' && \
+	vagrant ssh server3     -- -t 'sudo chown munge /etc/munge/munge.key' && \
+	vagrant ssh controller  -- -t 'ssh-keygen -b 2048 -t rsa -q -N "" -f /home/vagrant/.ssh/id_rsa' && \
+	vagrant ssh controller  -- -t 'cp /home/vagrant/.ssh/id_rsa.pub /vagrant/id_rsa.controller.pub' && \
+	vagrant ssh server1     -- -t 'cat /vagrant/id_rsa.controller.pub >> .ssh/authorized_keys' && \
+	vagrant ssh server1     -- -t 'ssh-keygen -b 2048 -t rsa -q -N "" -f /home/vagrant/.ssh/id_rsa' && \
+	vagrant ssh server1     -- -t 'cp /home/vagrant/.ssh/id_rsa.pub /vagrant/id_rsa.server.pub' && \
+	vagrant ssh server2     -- -t 'cat /vagrant/id_rsa.controller.pub >> .ssh/authorized_keys' && \
+	vagrant ssh server2     -- -t 'ssh-keygen -b 2048 -t rsa -q -N "" -f /home/vagrant/.ssh/id_rsa' && \
+	vagrant ssh server2     -- -t 'cp /home/vagrant/.ssh/id_rsa.pub /vagrant/id_rsa.server.pub' && \
+	vagrant ssh server3     -- -t 'cat /vagrant/id_rsa.controller.pub >> .ssh/authorized_keys' && \
+	vagrant ssh server3     -- -t 'ssh-keygen -b 2048 -t rsa -q -N "" -f /home/vagrant/.ssh/id_rsa' && \
+	vagrant ssh server3     -- -t 'cp /home/vagrant/.ssh/id_rsa.pub /vagrant/id_rsa.server.pub' && \
+	vagrant ssh controller  -- -t 'cat /vagrant/id_rsa.server.pub >> .ssh/authorized_keys' && \
 	rm -f munge.key id_rsa.controller.pub id_rsa.server.pub
 
 # make sure 'slurm' dir is writable for VMs
@@ -23,10 +33,14 @@ setup:
 start:
 	find slurm -type d -exec chmod a+rwx {} \; && \
 	vagrant ssh controller -- -t 'sudo /etc/init.d/munge start; sleep 5' && \
-	vagrant ssh server -- -t 'sudo /etc/init.d/munge start; sleep 5' && \
-	vagrant ssh controller -- -t 'sudo slurmctld; sleep 30' && \
-	vagrant ssh server -- -t 'sudo slurmd; sleep 30' && \
-	vagrant ssh controller -- -t 'sudo scontrol update nodename=server state=resume; sinfo; sleep 5'
+	vagrant ssh server1    -- -t 'sudo /etc/init.d/munge start; sleep 5' && \
+	vagrant ssh server2    -- -t 'sudo /etc/init.d/munge start; sleep 5' && \
+	vagrant ssh server3    -- -t 'sudo /etc/init.d/munge start; sleep 5' && \
+	vagrant ssh controller -- -t 'sudo slurmctld; sleep 5' && \
+	vagrant ssh server1    -- -t 'sudo slurmd; sleep 5' && \
+	vagrant ssh server2    -- -t 'sudo slurmd; sleep 5' && \
+	vagrant ssh server3    -- -t 'sudo slurmd; sleep 5' && \
+	vagrant ssh controller -- -t 'sudo scontrol update nodename=server[1-3] state=resume; sinfo; sleep 5'
 
 sinfo:
 	vagrant ssh controller -- -t 'sinfo'
