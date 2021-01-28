@@ -1,5 +1,6 @@
 #!/bin/bash
-#SBATCH -p debug
+#SBATCH --output=LOG.exp.icon-lam_nwp1nest.run.%j.o
+#SBATCH --error=LOG.exp.icon-lam_nwp1nest.run.%j.e
 #SBATCH --ntasks-per-node=1
 #SBATCH -t 12:00:00
 #SBATCH -J some_job_name
@@ -14,4 +15,4 @@ for item in ${SLURM_vars}; do
 done
 
 printf ">>> System hostname: %s\n" "$(hostname)"
-sleep 30
+sleep 3
